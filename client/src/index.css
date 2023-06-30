@@ -7,3 +7,53 @@
 }
 /* font-family: 'Playfair Display', serif;
 font-family: 'Poppins', sans-serif; */
+
+/* NAV BAR CSS */
+.navbar{
+  font-family: 'Poppins', sans-serif;
+  
+  font-size: 17px;
+  line-height: 26px;
+  text-transform: uppercase;
+  box-shadow: 0 8px 6px -6px grey;
+  --webkit-box-shadow: 0 8px 6px -6px grey;
+  border-bottom: 0px solid gray !important;
+}
+
+.nav-link{
+  font-weight: 300 !important;
+}
+
+.active{
+  border-bottom: 1px solid black;
+  font-weight: bold !important;
+}
+
+.navbar-brand {
+font-weight: 700;
+font-family: "roboto", sans-serif;
+letter-spacing: 3px;
+}
+
+ /* ================================
+ =================== footer============== */
+
+ .footer {
+color: antiquewhite;
+ background: linear-gradient(270deg, #000000 0%, #666666 100%);
+ height: 20vh;
+ }
+
+ .footer a{
+  text-decoration: none;
+  color: bisque;
+  padding: 10px;
+ }
+
+ .footer a:hover
+ {
+  color: aliceblue;
+  border-bottom: 2px solid whitesmoke;
+ }
+
+ 
