@@ -35,6 +35,58 @@ font-family: "roboto", sans-serif;
 letter-spacing: 3px;
 }
 
+
+/* ====================================Page Not Found css ========================= */
+
+
+.pnf {
+  display: flex;
+  min-height: 65vh;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  }
+  .pnf-title {
+  font-size: 100px;
+  font-weight: 700;
+  }
+  .pnf-heading {
+  font-weight: normal;
+  }
+  .pnf-btn {
+  color: black;
+  border: 1px solid black;
+  text-decoration: none;
+  padding: 10px;
+  margin-top: 10px;
+  }
+
+  .pnf-btn:hover{
+    text-decoration: none !important;
+    background: #000;
+    color: white !important;
+  }
+
+
+
+  /* =================================contact us=============================== */
+
+  .contactus, .aboutus, .privacy {
+    display: flex;
+    min-height: 80vh;
+  
+    align-items: center;
+    justify-content: center;
+  }
+
+
+
+
+
+
+
+
+
  /* ================================
  =================== footer============== */
 
