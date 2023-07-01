@@ -36,6 +36,22 @@ letter-spacing: 3px;
 }
 
 
+/* ===============================register Page=========================== */
+
+.register{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 70vh;
+  flex-direction: column;
+}
+
+
+
+
+
+
+
 /* ====================================Page Not Found css ========================= */
 
 
@@ -78,6 +94,7 @@ letter-spacing: 3px;
     align-items: center;
     justify-content: center;
   }
+
 
 
 
