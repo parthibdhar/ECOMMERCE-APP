@@ -17,5 +17,11 @@ router.post('/login',loginController)
 router.get('/test', requiredSignedIn, isAdmin,  testController)
 
 
+// authenticated routes
+router.get('/user', requiredSignedIn, (req, res) => {
+    res.status(200).send({ok: true}); 
+});
+
+
 export default router;
 
