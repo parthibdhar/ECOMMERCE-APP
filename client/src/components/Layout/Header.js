@@ -2,18 +2,18 @@ import React from 'react'
 import { NavLink, Link } from 'react-router-dom'
 import { MdShoppingBasket } from 'react-icons/md'
 import { useAuth } from '../../context/authContext'
-import toast  from 'react-hot-toast'
+import toast from 'react-hot-toast'
 
 const Header = () => {
   const [auth, setAuth] = useAuth()
   const handleLogOut = () => {
- setAuth({
-  ...auth,
-  user: null,
-  token: ""
- })
- localStorage.removeItem('auth')
- toast.success("logout success")
+    setAuth({
+      ...auth,
+      user: null,
+      token: ""
+    })
+    localStorage.removeItem('auth')
+    toast.success("logout success")
   }
   return (
     <>
@@ -31,7 +31,9 @@ const Header = () => {
               <NavLink to="/category" className="nav-link" >Category </NavLink>
             </li>
             {
-              !auth.user ? (<>  
+              !auth.user ? (<>
+
+
                 <li className="nav-item">
                   <NavLink to="/register" className="nav-link" >Sign up</NavLink>
                 </li>
@@ -39,11 +41,33 @@ const Header = () => {
                   <NavLink to="/login" className="nav-link" >Sign in</NavLink>
                 </li>
               </>) : (<>
+
+                <li className="nav-item dropdown">
+                  <NavLink
+                    className="nav-link dropdown-toggle"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false">
+                    {auth?.user?.name}
+                    {/* dashboard */}
+                  </NavLink>
+                  <ul className="dropdown-menu">
+                    <li><NavLink to='/dashboard' className="dropdown-item" >DashBoard</NavLink></li>
+                    <li> <NavLink onClick={handleLogOut} to="/login" className="dropdown-item" > Log Out</NavLink></li>
+                  </ul>
+                </li>
                 <li className="nav-item">
-                  <NavLink onClick={handleLogOut} to="/login" className="nav-link" > Log Out</NavLink>
+                  <NavLink onClick={handleLogOut} to="/login" className="dropdown-item" > Log Out</NavLink>
                 </li>
               </>)
             }
+            <li className="nav-item">
+              <NavLink to={`dashboard/${
+                auth?.user?.role === true ? "admin" : "user"
+              }`} className="nav-link" >DashBoard</NavLink>
+            </li>
+
             <li className="nav-item">
               <NavLink to="/cart" className="nav-link" >Cart (0) </NavLink>
             </li>
