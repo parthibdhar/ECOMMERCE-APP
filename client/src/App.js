@@ -8,10 +8,18 @@ import Policy from './pages/Policy';
 import PageNotFound from './pages/PageNotFound';
 import Register from './pages/AUTH/Register';
 import Login from './pages/AUTH/Login';
+
 import DashBoard from './pages/User/DashBoard';
 import PrivateRoute from './Routes/PrivateRoute';
 import ForgotPassword from './pages/AUTH/ForgotPassword';
 import AdminProtectedRoutes from './Routes/AdminProtectedRoutes';
+import AdminDashboard from './pages/Admin/AdminDashboard';
+import CreateCategory from './pages/Admin/CreateCategory';
+import CreateProduct from './pages/Admin/CreateProduct';
+import AdminMenuUsers from './pages/Admin/AdminMenuUsers';
+import Orders from './pages/User/Orders';
+import Profile from './pages/User/Profile';
+
 
 function App() {
   return (
@@ -20,9 +28,14 @@ function App() {
         <Route path='/' element={<HomePage />} />
         <Route path='/dashboard' element={<PrivateRoute />}>
           <Route path='user' element={<DashBoard />} />
+          <Route path='user/orders' element={<Orders />} />
+          <Route path='user/profile' element={<Profile />} />
         </Route>
         <Route path='/dashboard' element={< AdminProtectedRoutes />}>
-          <Route path='admin' element={<DashBoard/>}/>
+          <Route path='admin' element={<AdminDashboard/>}/>
+          <Route path='admin/create-category' element={<CreateCategory/>}/>
+          <Route path='admin/create-product' element={<CreateProduct/>}/>
+          <Route path='admin/users' element={<AdminMenuUsers/>}/>
 
         </Route>
         <Route path='/register' element={<Register />} />

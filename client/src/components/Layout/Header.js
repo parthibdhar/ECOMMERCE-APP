@@ -42,21 +42,6 @@ const Header = () => {
                 </li>
               </>) : (<>
 
-                <li className="nav-item dropdown">
-                  <NavLink
-                    className="nav-link dropdown-toggle"
-                    id="navbarDropdown"
-                    role="button"
-                    data-bs-toggle="dropdown"
-                    aria-expanded="false">
-                    {auth?.user?.name}
-                    {/* dashboard */}
-                  </NavLink>
-                  <ul className="dropdown-menu">
-                    <li><NavLink to='/dashboard' className="dropdown-item" >DashBoard</NavLink></li>
-                    <li> <NavLink onClick={handleLogOut} to="/login" className="dropdown-item" > Log Out</NavLink></li>
-                  </ul>
-                </li>
                 <li className="nav-item">
                   <NavLink onClick={handleLogOut} to="/login" className="dropdown-item" > Log Out</NavLink>
                 </li>

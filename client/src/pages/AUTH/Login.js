@@ -1,7 +1,5 @@
-/* eslint-disable no-restricted-globals */
 import React, { useState } from "react";
 import Layout from "../../components/Layout/Layout";
-// import {toast} from "react-toastify"
 import toast from 'react-hot-toast';
 import axios from "axios"
 import {useNavigate, useLocation} from "react-router-dom"
