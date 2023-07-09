@@ -6,6 +6,7 @@ import { connectDB } from './config/connectDB.js'
 import   authRoutes  from './routes/authRoute.js'
 import categoryrouter from './routes/categoryRoute.js'
 import cors from "cors"
+import productRouter from './routes/productRoutes.js'
 // env config
 dotenv.config()
 
@@ -23,6 +24,7 @@ app.use(morgan('dev'))
 //routes 
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/category', categoryrouter)
+app.use('/api/v1/products', productRouter)
 
 //rest api
 app.get('/', (req, res) => {
