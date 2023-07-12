@@ -30,7 +30,7 @@ categoryrouter.get('/getAll-Categories', getAllCategoryController)
 categoryrouter.get('/getSingle-Category/:slug', getSingleCategoryController)
 
 //delete category
-categoryrouter.delete('/delete-Category/:slug',
+categoryrouter.delete('/delete-Category/:id',
 requiredSignedIn,
 isAdmin,
 deleteCategoryController)

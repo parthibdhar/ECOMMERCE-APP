@@ -91,7 +91,8 @@ export const getSingleCategoryController = async (req, res) => {
 //delete this category
 export const deleteCategoryController = async (req, res) => {
     try {
-        const category = await categoryModel.findOneAndDelete({ slug: slugify(req.params.slug) })
+        const {id} =  req.params
+        const category = await categoryModel.findByIdAndDelete(id)
         console.log(category);
         res.status(200).send({
             success: true,
