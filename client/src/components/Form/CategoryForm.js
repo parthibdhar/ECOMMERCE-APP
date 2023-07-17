@@ -5,15 +5,15 @@ const CategoryForm = ({handleSubmit, value, setValue}) => {
   return (
     <>
       <form onSubmit={handleSubmit}>
-        <div class="mb-3">
+        <div className="mb-3">
           <input
             type="text"
-            class="form-control"
+            className="form-control"
             placeholder="Enter new Category"
             value={value}
             onChange={(e) => setValue(e.target.value)}
           />
-        <input type="submit" class=" m-3 btn btn-primary" value='submit'/>
+        <input type="submit" className=" m-3 btn btn-primary" value='submit'/>
         </div>
         
       </form>

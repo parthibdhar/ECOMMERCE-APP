@@ -16,7 +16,7 @@ const productRouter = express.Router();
 productRouter.post('/create-product',
     requiredSignedIn,
     isAdmin,
-    formidable(),
+    // formidable(),
     createProductController);
 
 // updated product

@@ -1,12 +1,15 @@
 import productModel from "../models/productModel.js";
 import fs from "fs"
 import slugify from "slugify";
-
+import cloudinary from "cloudinary"
 //create a new product
 export const createProductController = async (req, res) => {
+    console.log(req.body);
     try {
-        const { name, slug, description, price, category, quantity, shipping } = req.fields
-        const { photo } = req.files
+        console.log("hello");
+        const { name, description, price, category, quantity, shipping } = req.body
+        console.log(name, description, price, category, quantity);
+        // const { photo } = req.files
         // validation
         switch (true) {
             case !name: return res.status(500).send({ msg:"name is required" })
@@ -14,13 +17,13 @@ export const createProductController = async (req, res) => {
             case !price: return res.status(500).send({ msg:"price is required" })
             case !category: return res.status(500).send({ msg:"category is required" })
             case !quantity: return res.status(500).send({ msg:"quantity is required" })
-            case photo && photo.size > 1000000 : return res.status(500).send({ msg:"photo is required & shouldbe less than 1mb" })  
+            // case photo && photo.size > 1000000 : return res.status(500).send({ msg:"photo is required & shouldbe less than 1mb" })  
         }
-        const product = new productModel({...req.fields, slug: slugify(name)})
-        if (photo){
-            product.photo.data = fs.readFileSync(photo.path)
-            product.photo.contentType = photo.type
-        }
+        const product = new productModel({...req.body, slug: slugify(name), category: slugify(category)})
+        // if (photo){
+        //     product.photo.data = fs.readFileSync(photo.path)
+        //     product.photo.contentType = photo.type
+        // }
         await product.save()
         return res.status(201).send({
             success: true,
@@ -29,6 +32,8 @@ export const createProductController = async (req, res) => {
         })
 
     } catch (error) {
+        // console.log(req);
+
         console.log(error);
         res.status(500).send({
             success: false,

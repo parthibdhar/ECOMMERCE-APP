@@ -113,7 +113,7 @@ const CreateCategory = () => {
             </div>
             <hr />
             <div className="w-75">
-              <table class="table table-striped">
+              <table className="table table-striped">
                 <thead>
                   <tr>
                     <th scope="col">Name</th>
