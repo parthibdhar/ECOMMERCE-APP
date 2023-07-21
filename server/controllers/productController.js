@@ -2,46 +2,82 @@ import productModel from "../models/productModel.js";
 import fs from "fs"
 import slugify from "slugify";
 import cloudinary from "cloudinary"
+import { error } from "console";
+
+// config cloudinary
+cloudinary.config({ 
+    cloud_name: 'pdharcloud', 
+    api_key: '985441353525259', 
+    api_secret: 'IC9ADGBFiXKJ_7UZjhgXZ0-KRLw' 
+  });
+
 //create a new product
 export const createProductController = async (req, res) => {
-    console.log(req.body);
-    try {
         console.log("hello");
-        const { name, description, price, category, quantity, shipping } = req.body
+        const { name, description, price, category, quantity, image } = req.body
         console.log(name, description, price, category, quantity);
-        // const { photo } = req.files
-        // validation
-        switch (true) {
-            case !name: return res.status(500).send({ msg:"name is required" })
-            case !description: return res.status(500).send({ msg:"description is required" })
-            case !price: return res.status(500).send({ msg:"price is required" })
-            case !category: return res.status(500).send({ msg:"category is required" })
-            case !quantity: return res.status(500).send({ msg:"quantity is required" })
-            // case photo && photo.size > 1000000 : return res.status(500).send({ msg:"photo is required & shouldbe less than 1mb" })  
-        }
-        const product = new productModel({...req.body, slug: slugify(name), category: slugify(category)})
-        // if (photo){
-        //     product.photo.data = fs.readFileSync(photo.path)
-        //     product.photo.contentType = photo.type
-        // }
-        await product.save()
-        return res.status(201).send({
-            success: true,
-            msg: "Product created successfully",
-            product
-        })
+        const { photo } = req.files
+        console.log(req.files);
+      if(photo && photo.size > 1000000) return res.status(500).send({ msg:"photo is required & shouldbe less than 1mb" })  
 
-    } catch (error) {
-        // console.log(req);
 
-        console.log(error);
-        res.status(500).send({
-            success: false,
-            msg: 'error while creating this product',
-            error
-        })
-    }
+        //post t cloudinary
+// this imagdata come from base 64
+// const imageData = Buffer.from(image.split(',')[1], 'base64');
+        const imagePath = photo.tempFilePath
+        const options = {
+            use_filename: true,
+            unique_filename: false,
+            overwrite: true,
+          };
+      const result = await cloudinary.uploader.upload(imagePath, options);
+          console.log(result.url);
+          
+          if (result?.url)
+          {
+            try {
+                // validation
+                switch (true) {
+                    case !name: return res.status(500).send({ msg:"name is required" })
+                    case !description: return res.status(500).send({ msg:"description is required" })
+                    case !price: return res.status(500).send({ msg:"price is required" })
+                    case !category: return res.status(500).send({ msg:"category is required" })
+                    case !quantity: return res.status(500).send({ msg:"quantity is required" })
+                }
+                const product = new productModel({...req.body, slug: slugify(name), category: slugify(category), photo:result?.url})
+                // if (photo){
+                //     product.photo.data = fs.readFileSync(photo.path)
+                //     product.photo.contentType = photo.type
+                // }
+                await product.save()
+                return res.status(201).send({
+                    success: true,
+                    msg: "Product created successfully",
+                    upload: "image uploaded successfully",
+                    product,
+                    image: result.url
+                })
+        
+            } catch (error) {
+                // console.log(req);
+        
+                console.log(error);
+                res.status(500).send({
+                    success: false,
+                    msg: 'error while creating this product',
+                    error
+                })
+            }
+          }else{
+            return res.status(500).send({
+                success: false,
+                msg: 'error while uploading to cloudinary',
+               
+            });
+          }
 }   
+
+
 
 //upddate products
 export const updateProductController = async (req,res) => {

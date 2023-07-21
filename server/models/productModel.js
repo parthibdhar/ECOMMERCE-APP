@@ -16,7 +16,7 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
     price: {
-        type: String,
+        type: Number,
         required: true,
     },
     category: {
@@ -28,8 +28,7 @@ const productSchema = new mongoose.Schema({
         required: true,
     },
     photo:{
-        data: Buffer,
-        contentType: String
+        type: String,
     },
     shipping:{
         type: Boolean

@@ -6,7 +6,7 @@ import {
     getProdductsController,
     getSingleProdductsController,
     getSingleProductPhotoController,
-    updateProductController
+    updateProductController,
 } from '../controllers/productController.js';
 import formidable from 'express-formidable'
 
@@ -14,10 +14,12 @@ const productRouter = express.Router();
 
 // post product
 productRouter.post('/create-product',
-    requiredSignedIn,
-    isAdmin,
+    // requiredSignedIn,
+    // isAdmin,
     // formidable(),
     createProductController);
+
+
 
 // updated product
 productRouter.put('/update-product/:pid',

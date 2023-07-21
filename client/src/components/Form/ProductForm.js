@@ -1,42 +1,39 @@
-import React from "react";
-import Layout from "../Layout/Layout";
-import AdminMenu from "../Layout/AdminMenu";
-import axios from 'axios';
-import { Cloudinary } from 'cloudinary-core';
+import React, { useEffect } from "react";
 
-const ProductForm = ({ handleSubmit, product, setProduct, image, setImage }) => {
-  // axios intance
-  const axiosInstance = axios.create({
-    baseURL: 'https://api.cloudinary.com/v1_1/pdharcloud/image/upload',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
-  
 
+const ProductForm = ({ handleSubmit, product, setProduct, image, setImage, base64Image, setBase64Image }) => {
   const handleChange = (e) => {
-   console.log("target", e.target.name);
+    console.log("target", e.target.name);
     setProduct((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-};
+  };
 
-
-
-// upload to cloud storage
-const uploadImage = async() => {
-  console.log("image " , image);
-
-  const formData = new FormData();
-  formData.append("file", image);
-  console.log("formdata_file:  " , formData);
-  formData.append("upload_preset", "Ecommerce-app-2023");
-  console.log("formdata_upload-preset:  " , formData);
+  const imageSeleted = (e) => {
+    setImage(e.target.files[0])
+    // console.log("img target: ", image);
+    // if (image) {
+    // const reader = new FileReader();
+    // reader.readAsDataURL(e.target.files[0]);
+    // reader.onloadend = () => {
+    //   const base64Url = reader.result;
+    //   console.log("uuurrrlll: ", base64Url);
+    //   setBase64Image(base64Url);
+    //   console.log("Base64Image_url: " + typeof (base64Url));
+    // };
+   
+      
   
+    // }
 
-  await axiosInstance.post('', formData).
-  then(r => console.log(r.data)).
-  catch(err => console.error(err))
-}
-console.log("after change: ", product);
+  }
+
+  useEffect(() => {
+    console.log('State after setImage:', image); // This will show the updated state
+
+    console.log('State after baseurl:', base64Image); // This will show the updated state
+
+
+  }, [image]);
+  console.log("after change: ", product);
   return (
     <>
       <form onSubmit={handleSubmit}>
@@ -45,13 +42,10 @@ console.log("after change: ", product);
             type="file"
             className="form-control"
             placeholder="provide products image"
-            name='photo'
-            onChange={(e) => {
-              setImage(e.target.files[0])
-              
-            }}
+            name='image'
+            onChange={imageSeleted}
           />
-          <button onClick={uploadImage}> dao</button>
+          {/* <button onClick={uploadImage}> dao</button> */}
           <input
             type="text"
             className="form-control"
