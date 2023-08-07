@@ -48,7 +48,7 @@ const Header = () => {
               </>)
             }
             <li className="nav-item">
-              <NavLink to={`dashboard/${
+              <NavLink to={`//localhost:3000/dashboard/${
                 auth?.user?.role === true ? "admin" : "user"
               }`} className="nav-link" >DashBoard</NavLink>
             </li>

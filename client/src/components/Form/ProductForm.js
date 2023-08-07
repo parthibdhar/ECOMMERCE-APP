@@ -1,14 +1,22 @@
-import React, { useEffect } from "react";
+import { Select } from "antd";
+import React from "react";
 
+const ProductForm = ({
+  handleSubmit,
+  product,
+  setProduct,
+  image,
+  setImage,
 
-const ProductForm = ({ handleSubmit, product, setProduct, image, setImage, base64Image, setBase64Image }) => {
+}) => {
+  const { Option } = Select;
   const handleChange = (e) => {
     console.log("target", e.target.name);
     setProduct((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const imageSeleted = (e) => {
-    setImage(e.target.files[0])
+    setImage(e.target.files[0]);
     // console.log("img target: ", image);
     // if (image) {
     // const reader = new FileReader();
@@ -19,69 +27,92 @@ const ProductForm = ({ handleSubmit, product, setProduct, image, setImage, base6
     //   setBase64Image(base64Url);
     //   console.log("Base64Image_url: " + typeof (base64Url));
     // };
-   
-      
-  
+
     // }
-
-  }
-
-  useEffect(() => {
-    console.log('State after setImage:', image); // This will show the updated state
-
-    console.log('State after baseurl:', base64Image); // This will show the updated state
-
-
-  }, [image]);
+  };
   console.log("after change: ", product);
   return (
     <>
-      <form onSubmit={handleSubmit}>
+      <form encType="multipart/form-data">
         <div className="mb-3">
           <input
             type="file"
             className="form-control"
             placeholder="provide products image"
-            name='image'
+            name="image"
             onChange={imageSeleted}
           />
-          {/* <button onClick={uploadImage}> dao</button> */}
+
+          <input
+            type="submit"
+            className=" m-3 btn btn-dark"
+            value="post image"
+          />
+        </div>
+      </form>
+
+      <form onSubmit={handleSubmit}>
+        <div className="mb-3">
           <input
             type="text"
+            value={product.name}
+            placeholder="write a name"
             className="form-control"
-            placeholder="Enter new productr Name"
             name="name"
             onChange={handleChange}
           />
-          <input
+        </div>
+        <div className="mb-3">
+          <textarea
             type="text"
+            value={product.description}
+            placeholder="write description"
             className="form-control"
-            placeholder="Enter the description of product"
-            name='description'
+            name="description"
             onChange={handleChange}
           />
+        </div>
+        <div className="mb-3">
           <input
-            type="text"
+            type="number"
+            value={product.price}
+            placeholder="write a price"
             className="form-control"
-            placeholder="Enter product price"
-            name='price'
+            name="price"
             onChange={handleChange}
           />
+        </div>
+        <div className="mb-3">
           <input
-            type="text"
+            type="number"
+            value={product.quantity}
+            placeholder="write quantity"
             className="form-control"
-            placeholder="available quantity"
-            name='quantity'
+            name="quantity"
             onChange={handleChange}
           />
+        </div>
+        <div className="mb-3">
+          <Select
+            bordered={true}
+            placeholder="Select Shipping"
+            size="large"
+            showSearch
+            className="form-select mb-3"
+            onChange={(value) => {
+              setProduct((prev) => ({ ...prev, shipping: value }));
+            }}
+          >
+            <Option value={false}>No</Option>
+            <Option value={true}>Yes</Option>
+          </Select>
+        </div>
+        <div className="mb-3">
           <input
-            type="text"
-            className="form-control"
-            placeholder="Shipping details"
-            name='shipping'
-            onChange={handleChange}
+            type="submit"
+            className=" m-3 btn btn-primary"
+            value="create product"
           />
-          <input type="submit" className=" m-3 btn btn-primary" value="submit" />
         </div>
       </form>
     </>

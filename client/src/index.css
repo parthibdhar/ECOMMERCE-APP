@@ -133,3 +133,9 @@ background: linear-gradient(292deg, rgba(0,0,0,0.9360994397759104) 0%, rgba(183,
  }
 
  
+
+ /* ================================= product ================================== */
+.product-link{
+  text-decoration: none !important;
+  color: black !important;
+}

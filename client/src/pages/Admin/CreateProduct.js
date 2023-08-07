@@ -5,12 +5,14 @@ import { toast } from "react-hot-toast";
 import axios from "axios";
 import ProductForm from "../../components/Form/ProductForm";
 import { Select } from 'antd';
+import { useNavigate } from "react-router-dom";
 
 const CreateProduct = () => {
+  const navigate = useNavigate()
   const port = process.env.REACT_APP_API
   const { Option } = Select
   const [categories, setCategories] = useState([]);
-  const [allProducts, setAllProducts] = useState([]);
+  
   const [category, setCategory] = useState('')
   const [product, setProduct] = useState({
     name: '',
@@ -24,58 +26,23 @@ const CreateProduct = () => {
   const [base64Image, setBase64Image] = useState("")
 
 
-
-  // const generateBase64Image = () =>{
-  //   const reader =  new FileReader();
-  //     reader.onloadend =  () => {
-  //       const base64Url =  reader.result;
-  //        setBase64Image(base64Url);
-  //        console.log("Base64Image_url: " + typeof(base64Url));
-
-  //     };
-  //     if (image) {
-  //       reader.readAsDataURL(image);
-  //     }
-  // }
-
-  //Handle Form for create categories
+  //Handle Form for create Products
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      // console.log("img", image);
-      // console.log("base64Image1", base64Image);
-      setProduct(prev => ({ ...prev, image: image }))
+    try {  
+      console.log("hello> " , product, category);
       const { data } = await axios.post(
         `${port}/api/v1/products/create-product`,
-        { ...product, category, price: parseInt(product.price), quantity: parseInt(product.quantity)}
-      );
+        {...product,
+          category,
+          price: parseInt(product.price),
+          quantity: parseInt(product.quantity), 
+        },
+              );
       alert("hi")
       if (data?.success) {
         toast.success(`${data.product.name} created successfully}`);
-        getAllProducts();
-      } else {
-        toast.error(data.msg);
-      }
-
-      // const data = await fetch(
-      //   `${port}/api/v1/products/create-product`,
-      //   {
-      //     'method': 'POST',
-      //     'headers': {
-      //       'Content-Type': 'application/json',
-      //     },
-      //     'body': JSON.stringify({
-      //       ...product,
-      //       category,
-      //       price: parseInt(product.price),
-      //       quantity: parseInt(product.quantity)
-      //     })
-      //   });
-      alert("hi")
-      console.log(data);
-      if (data?.success) {
-        toast.success(`${data.product.name} created successfully}`);
-        getAllProducts();
+        navigate('/dashboard/admin/products')
       } else {
         toast.error(data.msg);
       }
@@ -85,27 +52,7 @@ const CreateProduct = () => {
     }
   };
 
-  //get all Products
-  const getAllProducts = async () => {
-    try {
-      const { data } = await axios.get(
-        `${port}/api/v1/products/get-products`
-      );
-      console.log(data);
-
-      if (data.success) {
-        setAllProducts(data.products)
-        console.log(allProducts);
-      };
-    } catch (error) {
-      console.log(error);
-      toast.error("something went wrong while getting all categories");
-    }
-  };
-
-  useEffect(() => {
-    getAllProducts();
-  }, [0]);
+ 
 
   //get all categories
   const getAllCategories = async () => {
@@ -134,7 +81,7 @@ const CreateProduct = () => {
           </div>
           <div className="col-md-9">
             <h1>create products</h1>
-            <div className="m-1 " style={{ cursor: 'pointer' }}>
+            <div className="m-1 mb-3 " style={{ cursor: 'pointer' }}>
               <Select bordered={true}
                 placeholder=" select a category"
                 size="large"
@@ -143,7 +90,7 @@ const CreateProduct = () => {
                 onChange={(value) => setCategory(value)}
                 style={{ cursor: 'pointer' }} >
                 {categories?.map(c => (
-                  <Option key={c._id} value={c._id}>{c.name}</Option>
+                  <Option key={c._id} value={c.name}>{c.name}</Option>
                 ))}
               </Select>
             </div>
@@ -168,3 +115,43 @@ const CreateProduct = () => {
 };
 
 export default CreateProduct;
+
+
+// images post axios
+// const handleSubmit = async (e) => {
+//   e.preventDefault();
+//   try {
+//     const formData = new FormData();
+//   console.log("pele? ", image);
+//     setProduct(prev => ({ ...prev, image: formData }))
+//     console.log("formData", formData);
+//     const { data } = await axios.post(
+//       `${port}/api/v1/products/create-product`,
+//       {
+//         ...product,
+//         category,
+//         price: parseInt(product.price),
+//         quantity: parseInt(product.quantity),
+        
+//       },
+//             );
+//     alert("hi")
+//     if (data?.success) {
+//       toast.success(`${data.product.name} created successfully}`);
+//       getAllProducts();
+//     } else {
+//       toast.error(data.msg);
+//     }
+//     alert("hi")
+//     console.log(data);
+//     if (data?.success) {
+//       toast.success(`${data.product.name} created successfully}`);
+//       getAllProducts();
+//     } else {
+//       toast.error(data.msg);
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     toast.error("something went wrong in input form");
+//   }
+// };
