@@ -13,7 +13,6 @@ const UpdateProduct = () => {
     const { Option } = Select
     const [categories, setCategories] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
-    const [category, setCategory] = useState('')
     const [product, setProduct] = useState({
       name: '',
       image: '',
@@ -50,7 +49,6 @@ useEffect(() => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {  
-      console.log("hello> " , product, category);
       const { data } = await axios.put(
         `${port}/api/v1/products/update-product/${product._id}`,
         {...product,
@@ -127,6 +125,7 @@ const handleDeleteProduct = async () => {
   }
   useEffect(() => {
     getAllCategories();
+    //eslint-disable-next-line
   }, []);
   return (
     <Layout title=" Dashboard - Create Product Ecommerce - App">
