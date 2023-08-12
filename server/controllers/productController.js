@@ -25,13 +25,13 @@ export const createProductController = async (req, res) => {
             case !category: return res.status(500).send({ msg: "category is required" })
             case !quantity: return res.status(500).send({ msg: "quantity is required" })
         }
-        const product = new productModel({ ...req.body, slug: slugify(name), category: slugify(category)})
+        const product = new productModel({ ...req.body, slug: slugify(name), category: slugify(category) })
         await product.save()
         return res.status(201).send({
             success: true,
             msg: "Product created successfully",
             product,
-           
+
         })
 
     } catch (error) {
@@ -96,7 +96,7 @@ export const updateProductController = async (req, res) => {
         console.log(req.params.pid);
         const { name, slug, description, price, category, quantity, shipping } = req.body
         console.log(name, description, price, category, quantity, shipping);
-  
+
         // validation
         switch (true) {
             case !name: return res.status(500).send({ msg: "name is required" })
@@ -104,12 +104,12 @@ export const updateProductController = async (req, res) => {
             case !price: return res.status(500).send({ msg: "price is required" })
             case !category: return res.status(500).send({ msg: "category is required" })
             case !quantity: return res.status(500).send({ msg: "quantity is required" })
-           
+
         }
         const product = await productModel.findByIdAndUpdate(req.params.pid,
             { ...req.body, slug: slugify(name) },
             { new: true })
-    
+
         return res.status(201).send({
             success: true,
             msg: "Product updated successfully",
@@ -164,8 +164,8 @@ export const getSingleProdductsController = async (req, res) => {
     try {
         const { slug } = req.params
         const product = await productModel.findOne({ slug: slugify(slug) })
-        .populate('category')
- console.log(product);
+            .populate('category')
+        console.log(product);
         if (product) {
             res.status(200).send({
                 success: true,
@@ -216,6 +216,72 @@ export const deleteProductController = async (req, res) => {
         res.status(500).send({
             success: false,
             msg: 'error while ddeleting this product',
+            error
+        })
+    }
+}
+
+// product filtering
+export const productFiltersController = async (req, res) => {
+    try {
+        const { checked, radio } = req.body
+        console.log(checked, radio);
+        let args = {}
+        if (checked.length > 0) args.category = checked
+        if (radio.length) args.price = { $gte: radio[0], $lte: radio[1] }
+        const products = await productModel.find(args)
+        res.status(200).send({
+            success: true,
+            products
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'error while ddeleting this product',
+            error
+        })
+    }
+}
+
+//product count
+export const productCountController = async (req, res) => {
+    try {
+        const total = await productModel.find({}).estimatedDocumentCount()
+        res.status(200).send({
+            success: true,
+            total
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'error in product count',
+            error
+        })
+    }
+}
+
+// product per page
+export const productPerPageController = async (req, res) => {
+    try {
+        const perPage = 6
+        const page = req.params.page ? req.params.page : 1;
+        const products = await productModel.find({})
+            .skip((page - 1) * perPage)
+            .limit(perPage)
+            .sort({ createdAt: -1 });
+
+        res.status(200).send({
+            success: true,
+            products
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'error in product count',
             error
         })
     }

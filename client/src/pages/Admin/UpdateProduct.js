@@ -146,7 +146,7 @@ const handleDeleteProduct = async () => {
               onChange={(value) => setProduct((prev) => ({ ...prev, category: value }))}
               style={{ cursor: 'pointer' }} >
               {categories?.map(c => (
-                <Option key={c._id} value={c.slug}>{c.name}</Option>
+                <Option key={c._id} value={c.slug}>{c.slug}</Option>
               ))}
             </Select>
           </div>
