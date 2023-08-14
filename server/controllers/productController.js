@@ -163,13 +163,14 @@ export const getProdductsController = async (req, res) => {
 export const getSingleProdductsController = async (req, res) => {
     try {
         const { slug } = req.params
+        console.log("hi " + slug);
         const product = await productModel.findOne({ slug: slugify(slug) })
             .populate('category')
         console.log(product);
         if (product) {
             res.status(200).send({
                 success: true,
-                msg: "single prodect fetched",
+                msg: "single product fetched",
                 product
             })
         }
@@ -285,4 +286,55 @@ export const productPerPageController = async (req, res) => {
             error
         })
     }
+}
+
+//search product
+export const productSearchController = async (req, res) => {
+try {
+    const {keyWord} = req.params
+    const results = await productModel.find({
+        $or:[
+            {name:{$regex: keyWord, $options: "i"}},
+            {description:{$regex: keyWord, $options: "i"}},
+        ]
+    })
+    console.log(results);
+    res.json(results)
+} catch (error) {
+    console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'error in product search',
+            error
+        })
+}
+}
+
+//similar products
+export const productSimilarController = async (req, res) => {
+try {
+    console.log("hollla");
+    console.log(req.params);
+    const {pId, category} = req.params
+    console.log(category);
+    console.log();
+    const products = await productModel.find({
+        category,
+        _id: {$ne: pId},
+    })
+    .limit(3)
+    .populate("category")
+console.log(products);
+    res.status(200).send({
+        success: true,
+        products
+    })
+} catch (error) {
+    console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'error while generating similar products',
+            error
+        })
+}
 }

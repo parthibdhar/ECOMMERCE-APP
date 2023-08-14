@@ -60,9 +60,8 @@ const CreateProduct = () => {
       const { data } = await axios.get(
         `${port}/api/v1/category/getAll-Categories`
       );
-      console.log(data);
-
       if (data?.success) setCategories(data?.allCategories);
+      
     } catch (error) {
       console.log(error);
       toast.error("something went wrong while getting all categories");

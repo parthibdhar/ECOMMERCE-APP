@@ -21,6 +21,8 @@ import Orders from './pages/User/Orders';
 import Profile from './pages/User/Profile';
 import Products from './pages/Admin/Products ';
 import UpdateProduct from './pages/Admin/UpdateProduct';
+import Search from './pages/Search';
+import ProductDetails from './pages/ProductDetails';
 
 
 function App() {
@@ -28,6 +30,8 @@ function App() {
     < >
       <Routes>
         <Route path='/' element={<HomePage />} />
+        <Route path='/product/:slug' element={<ProductDetails />} />
+        <Route path='/search' element={<Search />} />
         <Route path='/dashboard' element={<PrivateRoute />}>
           <Route path='user' element={<DashBoard />} />
           <Route path='user/orders' element={<Orders />} />

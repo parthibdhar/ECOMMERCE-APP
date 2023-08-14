@@ -3,9 +3,12 @@ import { NavLink, Link } from 'react-router-dom'
 import { MdShoppingBasket } from 'react-icons/md'
 import { useAuth } from '../../context/authContext'
 import toast from 'react-hot-toast'
+import SearchInput from '../Form/SearchInput'
+import useCategory from '../../hooks/useCategory'
 
 const Header = () => {
   const [auth, setAuth] = useAuth()
+  const categories = useCategory()
   const handleLogOut = () => {
     setAuth({
       ...auth,
@@ -27,8 +30,36 @@ const Header = () => {
             <li className="nav-item ">
               <NavLink to="/" className="nav-link " > Home </NavLink>
             </li>
-            <li className="nav-item ">
-              <NavLink to="/category" className="nav-link" >Category </NavLink>
+            {/* Dropdown ---------------------- issue : ------------------- dropdown is not opening -------------------- */}
+
+            <li className="nav-item dropdown">
+              <Link className="nav-link dropdown-toggle"
+                to={"/"}
+                id="navbarDropdown"
+                data-bs-toggle="dropdown" >
+                Dropdown
+              </Link>
+              
+              {categories?.map(category => (
+                <ul className="dropdown-menu" >
+                  <li>
+                    <li> 
+                    <Link
+                      className="dropdown-item"
+                      to={`/categories`}>
+                      All  Categories
+                    </Link>
+                    </li>
+                    <Link
+                      className="dropdown-item"
+                      to={`/category/${category.slug}`}>
+                      {category.name}
+                    </Link>
+                  </li>
+
+                </ul>
+              ))}
+
             </li>
             {
               !auth.user ? (<>
@@ -48,15 +79,14 @@ const Header = () => {
               </>)
             }
             <li className="nav-item">
-              <NavLink to={`//localhost:3000/dashboard/${
-                auth?.user?.role === true ? "admin" : "user"
-              }`} className="nav-link" >DashBoard</NavLink>
+              <NavLink to={`//localhost:3000/dashboard/${auth?.user?.role === true ? "admin" : "user"
+                }`} className="nav-link" >DashBoard</NavLink>
             </li>
 
             <li className="nav-item">
               <NavLink to="/cart" className="nav-link" >Cart (0) </NavLink>
             </li>
-
+            <SearchInput />
           </ul>
 
         </div>

@@ -5,9 +5,11 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { Checkbox, Radio } from "antd";
 import { prices } from "../components/FilterByPrices";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
   const port = process.env.REACT_APP_API;
+  const navigate = useNavigate()
   const [categories, setCategories] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -43,6 +45,8 @@ const HomePage = () => {
   const getAllProducts = async () => {
     try {
     setLoading(true);
+    console.log("cat" + checked.length );
+    console.log("radio" + radio.length);
       const { data } = await axios.get(`${port}/api/v1/products/product-list/${page}`);
     setLoading(false)
       if (data.success) {
@@ -173,7 +177,7 @@ try {
                   <h5 className="card-title">{product?.name}</h5>
                   <p className="card-text">{product?.description.substring(0,30)}</p>
                   <p className="card-text"> $ {product?.price}</p>
-                  <button className="btn btn-primary ml-1">
+                  <button className="btn btn-primary ml-1" onClick={() => navigate(`/product/${product.slug}`)}>
                     More Details...
                   </button>
                   <button className="btn btn-secondary ml-1">

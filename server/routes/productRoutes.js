@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Route } from "express";
 import { isAdmin, requiredSignedIn } from "../middlewares/authMiddleware.js";
 import {
   createProductController,
@@ -10,6 +10,8 @@ import {
   productCountController,
   productFiltersController,
   productPerPageController,
+  productSearchController,
+  productSimilarController,
   updateProductController,
 } from "../controllers/productController.js";
 import formidable from "express-formidable";
@@ -66,5 +68,11 @@ productRouter.get("/product-count", productCountController)
 
 //prduct per page
 productRouter.get("/product-list/:page", productPerPageController)
+
+//search product
+productRouter.get("/searchProduct/:keyWord", productSearchController)
+
+//similar products
+productRouter.get("/similarProduct/:pId/:category", productSimilarController)
 
 export default productRouter;
