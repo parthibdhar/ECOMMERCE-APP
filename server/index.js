@@ -35,6 +35,8 @@ app.use(fileUpload({
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/category', categoryrouter)
 app.use('/api/v1/products', productRouter)
+//get razor psy key 
+app.get('/api/v1/getKey',  (req, res) => res.status(200).send({ key: process.env.RAZORPAY_API_KEY}))
 
 //rest api
 app.get('/', (req, res) => {

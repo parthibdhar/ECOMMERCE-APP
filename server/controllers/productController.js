@@ -1,8 +1,16 @@
 import productModel from "../models/productModel.js";
-import fs from "fs"
 import slugify from "slugify";
 import cloudinary from "cloudinary"
+import categoryModel from "../models/categoryModel.js";
+import dotenv from 'dotenv'
+import orderModel from "../models/orderModel.js";
+import Razorpay from "razorpay";
+import crypto from "crypto";
 import { error } from "console";
+
+// env config
+dotenv.config()
+
 
 // config cloudinary
 cloudinary.config({
@@ -10,6 +18,13 @@ cloudinary.config({
     api_key: '985441353525259',
     api_secret: 'IC9ADGBFiXKJ_7UZjhgXZ0-KRLw'
 });
+
+// config Razor Pay
+const instance = new Razorpay({
+    key_id: process.env.RAZORPAY_API_KEY,
+    key_secret: process.env.RAZORPAY_API_SECRET,
+});
+
 
 //create a new product
 export const createProductController = async (req, res) => {
@@ -290,51 +305,167 @@ export const productPerPageController = async (req, res) => {
 
 //search product
 export const productSearchController = async (req, res) => {
-try {
-    const {keyWord} = req.params
-    const results = await productModel.find({
-        $or:[
-            {name:{$regex: keyWord, $options: "i"}},
-            {description:{$regex: keyWord, $options: "i"}},
-        ]
-    })
-    console.log(results);
-    res.json(results)
-} catch (error) {
-    console.log(error);
+    try {
+        const { keyWord } = req.params
+        const results = await productModel.find({
+            $or: [
+                { name: { $regex: keyWord, $options: "i" } },
+                { description: { $regex: keyWord, $options: "i" } },
+            ]
+        })
+        console.log(results);
+        res.json(results)
+    } catch (error) {
+        console.log(error);
         res.status(400).send({
             success: false,
             msg: 'error in product search',
             error
         })
-}
+    }
 }
 
 //similar products
 export const productSimilarController = async (req, res) => {
-try {
-    console.log("hollla");
-    console.log(req.params);
-    const {pId, category} = req.params
-    console.log(category);
-    console.log();
-    const products = await productModel.find({
-        category,
-        _id: {$ne: pId},
-    })
-    .limit(3)
-    .populate("category")
-console.log(products);
-    res.status(200).send({
-        success: true,
-        products
-    })
-} catch (error) {
-    console.log(error);
+    try {
+        console.log("hollla");
+        console.log(req.params);
+        const { pId, category } = req.params
+        console.log(category);
+        console.log();
+        const products = await productModel.find({
+            category,
+            _id: { $ne: pId },
+        })
+            .limit(3)
+            .populate("category")
+        console.log(products);
+        res.status(200).send({
+            success: true,
+            products
+        })
+    } catch (error) {
+        console.log(error);
         res.status(400).send({
             success: false,
             msg: 'error while generating similar products',
             error
         })
+    }
 }
+
+//category wise product
+export const productCategoryController = async (req, res) => {
+    try {
+        console.log(req.params.slug);
+        const category = await categoryModel.findOne({ slug: req.params.slug });
+        console.log(category);
+        console.log("hi now products");
+        const products = await productModel.find({ category: category.slug }).populate('category')
+        console.log(products);
+        res.status(200).send({
+            success: true,
+            category,
+            products
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'error while getting products',
+            error
+        })
+    }
+}
+
+
+// --------------------------------- payment Gateway api ---------------------------------
+
+
+// order checkot
+export const productCheckoutController = async (req, res) => {
+
+    try {
+        let { amount } = req.body
+        console.log("amount1 : " + amount);
+
+        amount = amount.substring(1, amount.length)
+        amount = amount.replace(',', '')
+        amount = amount.replace('.', '')
+
+        console.log("amount2 : " + amount);
+        // console.log("amount: "+ amount);
+        //  amount = Number(amount * 100)
+        const options = {
+            amount,  // amount in the smallest currency unit
+            currency: "INR",
+            receipt: "order_rcptid_11"
+        };
+        const order = await instance.orders.create(options);
+        console.log(order);
+        res.status(200).send({
+            success: true,
+            msg: 'ordered successful',
+            order
+
+        })
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'error while checkout order',
+            error
+        })
+    }
+}
+
+//payment verification
+export const productPaymentVerificationController = async (req, res) => {
+
+    try {
+        console.log(req.body);
+        console.log(req.user);
+        const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body
+        console.log(razorpay_payment_id, razorpay_order_id, razorpay_signature);
+        const body = razorpay_order_id + '|' + razorpay_payment_id
+        console.log(body);
+        const expectedSignature = crypto
+            .createHmac('sha256', process.env.RAZORPAY_API_SECRET)
+            .update(body.toString())
+            .digest('hex')
+        console.log('signature recived : ', razorpay_signature);
+        console.log('signature generated : ', expectedSignature);
+
+        const isMatch = (expectedSignature === razorpay_signature)
+
+        if (isMatch) {
+            const order = await new orderModel({
+                razorpay_payment_id,
+                razorpay_order_id,
+                razorpay_signature
+            }).save()
+            if (order) {
+                res.redirect(
+                    `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
+                )
+            }
+
+        }
+        else {
+            res.status(400).send({
+                success: false,
+                msg: 'Payment Verification Failed',
+            })
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'Payment Verification Failed',
+            error
+        })
+    }
 }

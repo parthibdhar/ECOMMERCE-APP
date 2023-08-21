@@ -1,14 +1,18 @@
 import express, { Route } from "express";
 import { isAdmin, requiredSignedIn } from "../middlewares/authMiddleware.js";
 import {
+
   createProductController,
   createProductImageController,
   deleteProductController,
   getProdductsController,
   getSingleProdductsController,
   getSingleProductPhotoController,
+  productCategoryController,
+  productCheckoutController,
   productCountController,
   productFiltersController,
+  productPaymentVerificationController,
   productPerPageController,
   productSearchController,
   productSimilarController,
@@ -74,5 +78,21 @@ productRouter.get("/searchProduct/:keyWord", productSearchController)
 
 //similar products
 productRouter.get("/similarProduct/:pId/:category", productSimilarController)
+
+//category Wise products
+productRouter.get("/pruduct-category/:slug", productCategoryController)
+
+// ----------------------------- PAYMENTS ROUTES -----------------------------
+
+// checkout
+productRouter.post("/razorpay/checkout", productCheckoutController)
+
+// payment Verification
+productRouter.post("/razorpay/PaymentVerification", productPaymentVerificationController)
+
+// //payment
+// productRouter.post("/braintree/payment",
+//   requiredSignedIn,
+//   braintreePaymentController)
 
 export default productRouter;

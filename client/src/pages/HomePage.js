@@ -6,10 +6,12 @@ import toast from "react-hot-toast";
 import { Checkbox, Radio } from "antd";
 import { prices } from "../components/FilterByPrices";
 import { useNavigate } from "react-router-dom";
+import { useCart } from './../context/cartContext';
 
 const HomePage = () => {
   const port = process.env.REACT_APP_API;
   const navigate = useNavigate()
+  const [cart, setCart] = useCart()
   const [categories, setCategories] = useState([]);
   const [allProducts, setAllProducts] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -26,7 +28,7 @@ const HomePage = () => {
       const { data } = await axios.get(
         `${port}/api/v1/category/getAll-Categories`
       );
-    
+
 
       if (data.success) setCategories(data.allCategories);
     } catch (error) {
@@ -44,14 +46,14 @@ const HomePage = () => {
   //get all Products
   const getAllProducts = async () => {
     try {
-    setLoading(true);
-    console.log("cat" + checked.length );
-    console.log("radio" + radio.length);
+      setLoading(true);
+      console.log("cat" + checked.length);
+      console.log("radio" + radio.length);
       const { data } = await axios.get(`${port}/api/v1/products/product-list/${page}`);
-    setLoading(false)
+      setLoading(false)
       if (data.success) {
         setAllProducts(data.products);
-        
+
       }
     } catch (error) {
       console.log(error);
@@ -61,8 +63,8 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    if(checked.length === 0 || radio.length === 0) getAllProducts();
-   
+    if (checked.length === 0 || radio.length === 0) getAllProducts();
+
   }, [checked, radio]);
 
 
@@ -70,48 +72,48 @@ const HomePage = () => {
   // get total count
   const getTotal = async () => {
     try {
-      const {data} = await axios.get(`${port}/api/v1/products/product-count`)
+      const { data } = await axios.get(`${port}/api/v1/products/product-count`)
       setTotal(data?.total)
     } catch (error) {
       console.log(error)
-      
+
     }
-      }
+  }
 
-      //loadmore
+  //loadmore
 
-      useEffect(() => {
-        if (page === 1 ) return ;
-        loadMore();
-       
-      }, [page]);
-      const loadMore = async () =>{
-        try {
-          setLoading(true)
-          const {data} = await axios.get((`${port}/api/v1/products/product-list/${page}`))
-          if(data?.success) {
-            setLoading(false)
-            setAllProducts([...allProducts, ...data?.products ])
-          }
-        } catch (error) {
-          console.log(error);
-          setLoading(false)
-        }
+  useEffect(() => {
+    if (page === 1) return;
+    loadMore();
+
+  }, [page]);
+  const loadMore = async () => {
+    try {
+      setLoading(true)
+      const { data } = await axios.get((`${port}/api/v1/products/product-list/${page}`))
+      if (data?.success) {
+        setLoading(false)
+        setAllProducts([...allProducts, ...data?.products])
       }
-  
+    } catch (error) {
+      console.log(error);
+      setLoading(false)
+    }
+  }
+
   //get filter Products
   const getFilterProducts = async () => {
-try {
-  const {data} = await axios.post(`${port}/api/v1/products/product-filters`,{checked, radio})
-  setAllProducts(data?.products);
-} catch (error) {
-  console.log(error);
-  toast.error("something went wrong while getting filtered product")
-}
+    try {
+      const { data } = await axios.post(`${port}/api/v1/products/product-filters`, { checked, radio })
+      setAllProducts(data?.products);
+    } catch (error) {
+      console.log(error);
+      toast.error("something went wrong while getting filtered product")
+    }
   }
 
   useEffect(() => {
-    if(checked.length || radio.length) getFilterProducts();
+    if (checked.length || radio.length) getFilterProducts();
 
   }, [checked, radio]);
 
@@ -156,8 +158,8 @@ try {
           </div>
         </div>
         <div className="col-md-9">
-          {JSON.stringify(radio, null, 4)}
-          {JSON.stringify(checked, null, 4)}
+          {/* {JSON.stringify(radio, null, 4)}
+          {JSON.stringify(checked, null, 4)} */}
           <h1 className="text-center">All Products List</h1>
 
           <div className="d-flex flex-wrap">
@@ -175,12 +177,20 @@ try {
                 />
                 <div className="card-body">
                   <h5 className="card-title">{product?.name}</h5>
-                  <p className="card-text">{product?.description.substring(0,30)}</p>
+                  <p className="card-text">{product?.description.substring(0, 30)}</p>
                   <p className="card-text"> $ {product?.price}</p>
                   <button className="btn btn-primary ml-1" onClick={() => navigate(`/product/${product.slug}`)}>
                     More Details...
                   </button>
-                  <button className="btn btn-secondary ml-1">
+                  <button className="btn btn-secondary ml-1"
+                      onClick={() => {
+                        if(!cart?.includes(product))
+                        {setCart([...cart, product]);
+                        localStorage.setItem('cart', JSON.stringify([...cart, product]));
+                        toast.success("item is added to the cart")}
+                      
+                      }}
+                  >
                     Add to Cart
                   </button>
                 </div>
@@ -191,12 +201,12 @@ try {
             {allProducts && allProducts.length < total && (
               <button className="btn btn-warning" onClick={(e) => {
                 e.preventDefault();
-                setPage((prev) => prev+1)
+                setPage((prev) => prev + 1)
               }}>
                 {loading ? "loading..." : "loadmore"}
               </button>
             )}
-            </div>
+          </div>
         </div>
       </div>
     </Layout>
