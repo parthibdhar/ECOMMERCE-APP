@@ -399,7 +399,7 @@ export const productCheckoutController = async (req, res) => {
         //  amount = Number(amount * 100)
         const options = {
             amount,  // amount in the smallest currency unit
-            currency: "INR",
+            currency: "USD", // currency
             receipt: "order_rcptid_11"
         };
         const order = await instance.orders.create(options);
@@ -425,31 +425,33 @@ export const productCheckoutController = async (req, res) => {
 export const productPaymentVerificationController = async (req, res) => {
 
     try {
-        console.log(req.body);
-        console.log(req.user);
+      
         const { razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body
         console.log(razorpay_payment_id, razorpay_order_id, razorpay_signature);
         const body = razorpay_order_id + '|' + razorpay_payment_id
-        console.log(body);
+       
         const expectedSignature = crypto
             .createHmac('sha256', process.env.RAZORPAY_API_SECRET)
             .update(body.toString())
             .digest('hex')
-        console.log('signature recived : ', razorpay_signature);
-        console.log('signature generated : ', expectedSignature);
+
 
         const isMatch = (expectedSignature === razorpay_signature)
 
         if (isMatch) {
             const order = await new orderModel({
-                razorpay_payment_id,
-                razorpay_order_id,
-                razorpay_signature
+                payment: {
+                    razorpay_payment_id,
+                    razorpay_order_id,
+                    razorpay_signature
+                }
+
             }).save()
             if (order) {
-                res.redirect(
-                    `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
-                )
+                res.status(200)
+                    .redirect(
+                        `http://localhost:3000/paymentsuccess?reference=${razorpay_payment_id}`
+                    )
             }
 
         }
@@ -468,4 +470,38 @@ export const productPaymentVerificationController = async (req, res) => {
             error
         })
     }
+}
+
+// order db update after payment successful
+export const orderdbUpdateController = async (req, res) => {
+    try {
+        console.log("high performance");
+        const {cart, refNum} =  req.body
+        const buyer = req.user._id
+        console.log( req.user);
+        console.log(cart, refNum);
+
+        const orderUpdate = await orderModel.findOneAndUpdate({"payment.razorpay_payment_id": refNum},{
+            products: cart,
+            buyer
+        });
+        console.log(orderUpdate._id);
+
+        const order = await orderModel.findById(orderUpdate._id);
+        console.log("order: ");
+        console.log(order);
+        res.status(200).send({
+            success: true,
+            msg: 'db updated successfully',
+            order
+           
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(400).send({
+            success: false,
+            msg: 'Payment Verification Failed',
+            error
+        });
+        }
 }

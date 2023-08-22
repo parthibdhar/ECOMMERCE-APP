@@ -8,6 +8,7 @@ import {
   getProdductsController,
   getSingleProdductsController,
   getSingleProductPhotoController,
+  orderdbUpdateController,
   productCategoryController,
   productCheckoutController,
   productCountController,
@@ -85,14 +86,15 @@ productRouter.get("/pruduct-category/:slug", productCategoryController)
 // ----------------------------- PAYMENTS ROUTES -----------------------------
 
 // checkout
-productRouter.post("/razorpay/checkout", productCheckoutController)
+productRouter.post("/razorpay/checkout",
+  productCheckoutController)
 
 // payment Verification
 productRouter.post("/razorpay/PaymentVerification", productPaymentVerificationController)
 
-// //payment
-// productRouter.post("/braintree/payment",
-//   requiredSignedIn,
-//   braintreePaymentController)
+// order db update after payment verification
+productRouter.patch("/orderd_db_update",
+  requiredSignedIn,
+  orderdbUpdateController)
 
 export default productRouter;

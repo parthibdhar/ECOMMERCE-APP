@@ -6,16 +6,15 @@ import { useNavigate } from "react-router-dom";
 import DropIn from "braintree-web-drop-in-react";
 import axios from "axios";
 import toast from "react-hot-toast";
-// import Razorpay from 'razorpay'
+
 
 const CartPage = () => {
   const port = process.env.REACT_APP_API;
 
   const [cart, setCart] = useCart();
-  const [auth, setAuth] = useAuth();
+  const [auth] = useAuth();
   const Navigate = useNavigate();
-  const [clientToken, setClientToken] = useState("");
-  const [instance, setInstance] = useState("");
+  
   const [loading, setLoading] = useState(false);
 
 
@@ -50,7 +49,8 @@ const CartPage = () => {
     }
   };
 
-  // get payment gate way token
+  
+  //Handle Payments
   const handlePayment = async () => {
     try {
       const { data: { key } } = await axios.get(`${port}/api/v1/getKey`)
@@ -88,39 +88,15 @@ const CartPage = () => {
       const razor = new window.Razorpay(options);
       console.log(razor);
       console.log(options.callback_url);
-      razor.open();
-      // localStorage.removeItem("cart");
-      // setCart([]);
-      // Navigate("/dashboard/user/order");
-      // toast.success("payment completed successfully");
+     await razor.open();
+      console.log(options.callback_url);
 
     } catch (error) {
       console.log(error);
     }
   };
 
-  //Handle Payments
-  const hadlePayment = async () => {
-    try {
-      setLoading(true);
-      const { nonce } = await instance.requestPaymentMethod();
-      const { data } = await axios.post(
-        `${port}/api/v1/products/braintree/payment`,
-        {
-          nonce,
-          cart,
-        }
-      );
-      setLoading(false);
-      localStorage.removeItem("cart");
-      setCart([]);
-      Navigate("/dashboard/user/order");
-      toast.success("payment completed successfully");
-    } catch (error) {
-      console.log(error);
-      setLoading(false);
-    }
-  };
+
   return (
     <Layout>
       <div className="container">

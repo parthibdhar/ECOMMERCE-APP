@@ -8,9 +8,11 @@ import { AuthProvider } from './context/authContext';
 import 'antd/dist/reset.css';
 import { SearchProvider } from './context/searchProductContext';
 import { CartProvider } from './context/cartContext';
+import { ChakraProvider } from '@chakra-ui/react'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
+  <ChakraProvider>
   <AuthProvider>
     <SearchProvider>
       <CartProvider>
@@ -20,6 +22,7 @@ root.render(
       </CartProvider>
     </SearchProvider>
   </AuthProvider>
+  </ChakraProvider>
 
 );
 

@@ -43,6 +43,7 @@ function App() {
         <Route path='/dashboard' element={<PrivateRoute />}>
           <Route path='user' element={<DashBoard />} />
           <Route path='user/orders' element={<Orders />} />
+         
           <Route path='user/profile' element={<Profile />} />
         </Route>
         <Route path='/dashboard' element={< AdminProtectedRoutes />}>
