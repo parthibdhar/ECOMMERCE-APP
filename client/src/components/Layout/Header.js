@@ -47,11 +47,10 @@ const Header = () => {
                 Home{" "}
               </NavLink>
             </li>
-            {/* Dropdown ---------------------- issue : ------------------- dropdown is not opening -------------------- */}
 
             <li>
               <div className=" nav-item dropdown">
-                <Link className="nav-link dropdown-toggle" data-toggle="dropdown" to={'/'}>Categories</Link>
+                <Link className="nav-link dropdown-toggle" data-toggle="dropdown" to={'#'}>Categories</Link>
                 <ul className="dropdown-menu" role="menu" aria-labelledby="dLabel">
                   <li><Link className="dropdown-item" to={`/categories`}>
                     All Categories

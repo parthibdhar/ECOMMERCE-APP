@@ -191,16 +191,60 @@ export const getOrderController = async (req, res) => {
     try {
         const buyer = req.user._id;
         console.log(buyer);
-const orders = await orderModel.find({buyer})
-.populate("products")
-.populate("buyer", "name")
-res.json(orders)
+        const orders = await orderModel.find({ buyer })
+            .populate("products")
+            .populate("buyer", "name")
+        res.json(orders)
 
     } catch (error) {
         console.error(error);
         res.status(500).send({
             success: false,
-            msg: "Error while gwtting orders",
+            msg: "Error while getting orders",
+            error
+        })
+    }
+}
+
+// get all orders
+export const getAllOrderController = async (req, res) => {
+    try {
+
+        console.log("All orders");
+        const orders = await orderModel.find({})
+            .populate("products")
+            .populate("buyer", "name")
+            .sort({ createdAt: "-1" })
+        res.json(orders)
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            success: false,
+            msg: "Error while getting All the orders",
+            error
+        })
+    }
+}
+
+// order status update
+export const orderStatusUpdateController = async (req, res) => {
+    try {
+        const { orderId } = req.params
+        const { status } = req.body
+        const order = await orderModel.findByIdAndUpdate(orderId,
+            { status },
+            { new: true })
+        res.status(200).send({
+            success: true,
+            msg: "Order status updated",
+            order
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(500).send({
+            success: false,
+            msg: "Error while updating order status",
             error
         })
     }
